@@ -4,16 +4,18 @@
 
 <html>
     <header>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'fa/css/all.min.css' %}">
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     </header>
 
     <body>
         <main>
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="#">Bolão</a>
+                    <a class="navbar-brand" href="{% url 'home' %}">Bolão</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -26,6 +28,18 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Partidas</a>
                             </li>
+                            {% if user.is_authenticated and user.is_superuser%}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Usuários
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                  <a href="{% url 'signup' %}" class="dropdown-item" href="#">Cadastrar</a>
+                                  <a class="dropdown-item" href="#">Listar</a>
+                                </div>
+                            </li>
+
+                            {% endif %}
                         </ul>
                         <div class="form-inline my-2 my-lg-0">
                             {% if user.is_authenticated %}
@@ -48,3 +62,9 @@
         </main>
     </body>
 </html>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".dropdown-toggle").dropdown();
+    });
+</script>

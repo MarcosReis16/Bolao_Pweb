@@ -9,7 +9,7 @@ from .models import (Usuario, Aposta, Partida, EncerrarPartida)
 class UserCreationForm(forms.ModelForm):
     class Meta:
         model = Usuario
-        fields = ('nome_player','login_player','saldo_player', 'groups')
+        fields = ('nome_player','login_player','password', 'groups')
 
     def save(self, commit=True):
         # Save the provided password in hashed format
@@ -24,23 +24,23 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class CustomUserAdmin(UserAdmin):
-    # The forms to add and change user instances
-    add_form = UserCreationForm
-    list_display = ("nome_player",)
-    ordering = ("nome_player",)
+# class CustomUserAdmin(UserAdmin):
+#     # The forms to add and change user instances
+#     add_form = UserCreationForm
+#     list_display = ("nome_player",)
+#     ordering = ("nome_player",)
 
-    fieldsets = (
-        (None, {'fields': ('nome_player', 'login_player', 'saldo_player', 'groups', 'password')}),
-        )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('nome_player', 'login_player', 'saldo_player', 'password', 'groups', 'is_superuser', 'is_staff', 'is_active')}
-            ),
-        )
+#     fieldsets = (
+#         (None, {'fields': ('nome_player', 'login_player', 'saldo_player', 'groups', 'password')}),
+#         )
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('nome_player', 'login_player', 'saldo_player', 'password', 'groups', 'is_superuser', 'is_staff', 'is_active')}
+#             ),
+#         )
 
-    filter_horizontal = ()
+#     filter_horizontal = ()
 
 
 class ApostarForm(forms.ModelForm):
@@ -53,17 +53,17 @@ class CriarPartidaForm(forms.ModelForm):
         model = Partida
         fields = ('nome_time1', 'nome_time2')
 
-class CriarPartidaAdmin(ModelAdmin):
-    add_form: CriarPartidaForm
-    fieldsets = (
-        (None, {'fields': ('nome_time1', 'nome_time2')}),
-        )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('nome_time1', 'nome_time2')}
-            ),
-        )
+# class CriarPartidaAdmin(ModelAdmin):
+#     add_form: CriarPartidaForm
+#     fieldsets = (
+#         (None, {'fields': ('nome_time1', 'nome_time2')}),
+#         )
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('nome_time1', 'nome_time2')}
+#             ),
+#         )
 
 class EncerrarPartidaForm(forms.ModelForm):
     partida = forms.ChoiceField(choices=Partida.objects.filter(id_partida=1))
@@ -88,14 +88,14 @@ class EncerrarPartidaForm(forms.ModelForm):
 
         return partida
 
-class EncerrarPartidaAdmin(ModelAdmin):
-    add_form: EncerrarPartidaForm
-    fieldsets = (
-        (None, {'fields': ('placar_time1', 'placar_time2')}),
-        )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('placar_time1', 'placar_time2')}
-            ),
-        )
+# class EncerrarPartidaAdmin(ModelAdmin):
+#     add_form: EncerrarPartidaForm
+#     fieldsets = (
+#         (None, {'fields': ('placar_time1', 'placar_time2')}),
+#         )
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('placar_time1', 'placar_time2')}
+#             ),
+#         )
