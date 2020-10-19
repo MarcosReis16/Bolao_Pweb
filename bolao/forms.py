@@ -4,6 +4,7 @@ from django import forms
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.admin import ModelAdmin
 from .models import (Usuario, Aposta, Partida, EncerrarPartida)
+from django.utils.translation import ugettext_lazy as _
 
 
 class UserCreationForm(forms.ModelForm):
@@ -23,26 +24,6 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
-
-# class CustomUserAdmin(UserAdmin):
-#     # The forms to add and change user instances
-#     add_form = UserCreationForm
-#     list_display = ("nome_player",)
-#     ordering = ("nome_player",)
-
-#     fieldsets = (
-#         (None, {'fields': ('nome_player', 'login_player', 'saldo_player', 'groups', 'password')}),
-#         )
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('nome_player', 'login_player', 'saldo_player', 'password', 'groups', 'is_superuser', 'is_staff', 'is_active')}
-#             ),
-#         )
-
-#     filter_horizontal = ()
-
-
 class ApostarForm(forms.ModelForm):
     class Meta:
         model = Aposta
@@ -53,17 +34,6 @@ class CriarPartidaForm(forms.ModelForm):
         model = Partida
         fields = ('nome_time1', 'nome_time2')
 
-# class CriarPartidaAdmin(ModelAdmin):
-#     add_form: CriarPartidaForm
-#     fieldsets = (
-#         (None, {'fields': ('nome_time1', 'nome_time2')}),
-#         )
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('nome_time1', 'nome_time2')}
-#             ),
-#         )
 
 class EncerrarPartidaForm(forms.ModelForm):
     partida = forms.ChoiceField(choices=Partida.objects.filter(id_partida=1))
@@ -87,15 +57,3 @@ class EncerrarPartidaForm(forms.ModelForm):
                 form = ContactForm()
 
         return partida
-
-# class EncerrarPartidaAdmin(ModelAdmin):
-#     add_form: EncerrarPartidaForm
-#     fieldsets = (
-#         (None, {'fields': ('placar_time1', 'placar_time2')}),
-#         )
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('placar_time1', 'placar_time2')}
-#             ),
-#         )

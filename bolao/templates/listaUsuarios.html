@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Listar Usuários{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated and user.is_superuser%}
+<h2>Listar Usuários</h2>
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Login</th>
+        <th>Nome Completo</th>
+        <th>Saldo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.login_player }}</td>
+          <td>{{ user.nome_player }}</td>
+          <td>{{ user.saldo_player }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  {% if users.has_other_pages %}
+    <ul class="pagination">
+      {% if users.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ users.previous_page_number }}">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Anterior</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&laquo;</span>
+          <span class="sr-only">Anterior</span>
+        </li>
+      {% endif %}
+      {% for i in users.paginator.page_range %}
+        {% if users.number == i %}
+          <li class="page-item active">
+            <a class="page-link" href="#">{{ i }} 
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      {% if users.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ users.next_page_number }}">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Próximo</span>
+          </a>
+        </li>
+      {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&raquo;</span>
+          <span class="sr-only">Próximo</span>
+        </li>
+      {% endif %}
+    </ul>
+  {% endif %}
+
+{% else %}
+  <h4>Você não tem permissão para esta ação</h4>
+{% endif %}
+
+{% endblock %}
