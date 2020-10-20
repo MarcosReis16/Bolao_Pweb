@@ -5,6 +5,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from .user_manager import UserManager
 from django.core.exceptions import ValidationError
+from moneyed import Money
 
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
@@ -39,6 +40,11 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     def devolver_valor(self):
         self.saldo_player += 5
         self.save()
+    
+    def adicionar_saldo(self, valor):
+        valor = Money(amount=valor, currency='BRL')
+        self.saldo_player += valor
+        self.save()
 
     def __str__(self):
         return self.nome_player
@@ -67,7 +73,7 @@ class Partida(models.Model):
     def verificar_ganhadores(self):
         if self.partida_encerrada:
             ganhadores = []
-            apostas = partida.aposta_set.all()
+            apostas = self.aposta_set.all()
             montante_apostas = 0
             for aposta in apostas:
                 if(aposta.placar_time1 == self.placar_time1 and
@@ -77,7 +83,7 @@ class Partida(models.Model):
 
             if(len(ganhadores) == 0):
                 resultado = 0
-                if self.placar_time1 > placar_time2:
+                if self.placar_time1 > self.placar_time2:
                     resultado = 1
                 else:
                     resultado = 2
@@ -99,13 +105,13 @@ class Partida(models.Model):
         else:
             raise ValidationError(_('Partida ainda está ocorrendo'), code='invalid')
     
-    def distribuir_premio(ganhadores, montante_apostas):
+    def distribuir_premio(self, ganhadores, montante_apostas):
         premio_individual = montante_apostas / len(ganhadores)
         for ganhador in ganhadores:
             ganhador.receber_premiacao(premio_individual)
 
     
-    def devolver_saldo(apostas):
+    def devolver_saldo(self, apostas):
         for aposta in apostas:
             aposta.usuario.devolver_valor()
 

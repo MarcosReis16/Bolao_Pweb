@@ -6,21 +6,57 @@
 
 {% block content %}
 {% if user.is_authenticated and user.is_superuser%}
+
+<!-- Modal -->
+<div class="modal fade" id="adicionarSaldoModal" tabindex="-1" role="dialog" aria-labelledby="tituloAdicionarSaldo" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="tituloAdicionarSaldo">Adicionar Saldo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-sm">Valor</span>
+          </div>
+          <input id="saldo" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="button" id="adicionarSaldoButton" class="btn btn-primary">Adicionar Saldo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <h2>Listar Usuários</h2>
 <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Login</th>
-        <th>Nome Completo</th>
-        <th>Saldo</th>
+        <th style="width: 30%; text-align: center;">Login</th>
+        <th style="width: 40%; text-align: center;">Nome Completo</th>
+        <th style="width: 20%; text-align: center;">Saldo</th>
+        <th style="width: 10%; text-align: center;">Ações</th>
       </tr>
     </thead>
     <tbody>
       {% for user in users %}
         <tr>
-          <td>{{ user.login_player }}</td>
-          <td>{{ user.nome_player }}</td>
-          <td>{{ user.saldo_player }}</td>
+          <td style="text-align: center;">{{ user.login_player }}</td>
+          <td style="text-align: center;">{{ user.nome_player }}</td>
+          <td style="text-align: center;">{{ user.saldo_player }}</td>
+          <td style="text-align: center;">
+            <button type="button" data-toggle="modal" data-target="#adicionarSaldoModal" onclick="adicionarSaldo('{{user.pk}}')" style="border: none; background: none;">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-credit-card" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/>
+                <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/>
+              </svg>
+            </button>
+          </td>
         </tr>
       {% endfor %}
     </tbody>
@@ -73,5 +109,38 @@
 {% else %}
   <h4>Você não tem permissão para esta ação</h4>
 {% endif %}
+
+<script>
+  $(document).ready(function() {
+    $("#saldo").on("input", function() {
+        // allow numbers, a comma or a dot
+        var v= $(this).val(), vc = v.replace(/[^0-9,.]/, '');
+        if (v !== vc)
+            $(this).val(vc);
+    });
+  });
+  var usuarioId = 0;
+
+    $('#adicionarSaldoButton').each(function () {
+      $(this).on('click', function(evt){
+        var saldo = $('#saldo').val();
+        
+        $.get('adiciona_Saldo/'+usuarioId+'/'+saldo, function (data, x, xhr) {
+          if(xhr.status == 204){
+            alert('Saldo inserido com sucesso!');
+          }
+          else{
+            alert('Houve um problema ao inserir o saldo');
+          }
+          $('#adicionarSaldoModal').modal('toggle');
+          document.location.reload(true);
+        });
+      });
+    });
+
+  function adicionarSaldo(id){
+    usuarioId = id;
+  };
+</script>
 
 {% endblock %}

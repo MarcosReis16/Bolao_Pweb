@@ -1,12 +1,14 @@
 # -*- coding:utf-8 -*-
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from .forms import ApostarForm, UserCreationForm
+from .forms import ApostarForm, UserCreationForm, CriarPartidaForm
 from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Usuario, Partida
 from django.utils.translation import ugettext_lazy as _
+from django.shortcuts import get_object_or_404
+
 
 # Create your views here.
 def realizar_aposta(request):
@@ -74,4 +76,42 @@ def list_Partidas(request):
         partidas = paginator.page(paginator.num_pages)
 
     return render(request, 'listaPartidas.html', { 'partidas': partidas })
+
+
+def encerra_Partida(request, pk, p1, p2):
+    if not request.user.is_superuser:
+        raise ValidationError(_('Usuário não autorizado'), code='invalid')
+    
+    partida = get_object_or_404(Partida, id_partida=pk)
+
+    partida.encerrar_partida(p1,p2)
+
+    return HttpResponse(status=204)
+
+def cadastrarPartida(request):
+    if not request.user.is_superuser:
+        raise ValidationError(_('Usuário não autorizado'), code='invalid')
+
+    if request.method == 'POST':
+        form = CriarPartidaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CriarPartidaForm()
+    return render(request, 'criarPartida.html', {'form': form})
+
+def adicionarSaldo(request, pk, valor):
+    if not request.user.is_superuser:
+        raise ValidationError(_('Usuário não autorizado'), code='invalid')
+
+    usuario = get_object_or_404(Usuario, id_player=pk)
+
+    usuario.adicionar_saldo(valor);
+
+    return HttpResponse(status=204)
+    
+
+    
+
 

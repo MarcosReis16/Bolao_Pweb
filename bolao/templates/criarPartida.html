@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Cadastrar Partida{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated and user.is_superuser%}
+<h2>Cadastrar Partida</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary">Cadastrar</button>
+</form>
+{% else %}
+    <h4>Você não tem permissão para esta ação</h4>
+{% endif %}
+{% endblock %}
