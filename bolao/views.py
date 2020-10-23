@@ -5,7 +5,7 @@ from .forms import ApostarForm, UserCreationForm, CriarPartidaForm
 from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Usuario, Partida
+from .models import Usuario, Partida, Aposta
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
 
@@ -85,6 +85,22 @@ def encerra_Partida(request, pk, p1, p2):
     partida = get_object_or_404(Partida, id_partida=pk)
 
     partida.encerrar_partida(p1,p2)
+
+    return HttpResponse(status=204)
+
+def realizar_Aposta(request, pk, p1, p2):
+    if not request.user.is_superuser:
+        raise ValidationError(_('Usuário não autorizado'), code='invalid')
+    
+    partida = get_object_or_404(Partida, id_partida=pk)
+
+    usuario = get_object_or_404(Usuario, id_player=request.user.pk)
+
+    aposta = Aposta();
+    aposta.usuario = usuario
+    aposta.partida = partida
+    aposta.placar_time1 = p1
+    aposta.placar_time2 = p2
 
     return HttpResponse(status=204)
 

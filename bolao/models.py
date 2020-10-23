@@ -38,7 +38,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         self.save()
     
     def devolver_valor(self):
-        self.saldo_player += 5
+        valor = Money(amount='5', currency='BRL')
+        self.saldo_player += valor
         self.save()
     
     def adicionar_saldo(self, valor):
@@ -115,14 +116,13 @@ class Partida(models.Model):
         for aposta in apostas:
             aposta.usuario.devolver_valor()
 
+    def armazenar_aposta(self):
+        valor = Money(amount='5', currency='BRL')
+        self.valor_acumulado += valor
+        self.save()
+
     def __str__(self):
         return str(self.id_partida)
-
-
-class EncerrarPartida(Partida):
-    class Meta:
-        proxy = True
-
     
 class Aposta(models.Model):
     id_aposta = models.AutoField(primary_key=True)
@@ -132,12 +132,14 @@ class Aposta(models.Model):
     valor_apostado = MoneyField(max_digits=10,decimal_places=2,default_currency='BRL')
     partida = models.ForeignKey(Partida, on_delete=models.CASCADE, null= False)
 
-    def apostar(self, placar_time1, placar_time2, usuario):
+    def apostar(self, placar_time1, placar_time2, partida, usuario):
         if(usuario.saldo_player >=5):
-            self.valor_apostado = 5
+            self.valor_apostado = Money(amount='5', currency='BRL')
             self.placar_time1 = placar_time1
             self.placar_time2 = placar_time2
             self.usuario = usuario
+            self.partida = partida
+            self.partida.armazenar_aposta()
             self.usuario.diminuir_saldo()
             self.save()
         else:
