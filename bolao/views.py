@@ -8,6 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Usuario, Partida, Aposta
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
 
 
 # Create your views here.
