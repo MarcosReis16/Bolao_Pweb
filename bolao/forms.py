@@ -12,6 +12,9 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ('nome_player','login_player','password', 'is_superuser')
+        widgets = {
+            'password': forms.PasswordInput(),
+        }
 
     def save(self, commit=True):
         # Save the provided password in hashed format
