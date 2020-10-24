@@ -34,8 +34,8 @@
 </div>
 
 <h2>Listar Usuários</h2>
-<table class="table table-bordered">
-    <thead>
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
       <tr>
         <th style="width: 30%; text-align: center;">Login</th>
         <th style="width: 40%; text-align: center;">Nome Completo</th>
@@ -125,7 +125,7 @@
       $(this).on('click', function(evt){
         var saldo = $('#saldo').val();
         
-        $.get('adiciona_Saldo/'+usuarioId+'/'+saldo, function (data, x, xhr) {
+        $.get('adicionar_saldo/'+usuarioId+'/'+saldo, function (data, x, xhr) {
           if(xhr.status == 204){
             alert('Saldo inserido com sucesso!');
           }

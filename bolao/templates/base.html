@@ -24,16 +24,19 @@
                     </button>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav mr-auto">
-                            {% if user.is_authenticated and user.is_superuser%}
+                            {% if user.is_authenticated%}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Partidas
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                {% if user.is_superuser %}
                                   <a href="{% url 'cadastrarPartida' %}" class="dropdown-item">Cadastrar</a>
+                                {% endif %}
                                   <a href="{% url 'listaPartidas' %}" class="dropdown-item">Listar</a>
                                 </div>
                             </li>
+                            {% if user.is_superuser %}
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                   Usuários
@@ -44,9 +47,17 @@
                                 </div>
                             </li>
                             {% endif %}
+                            {% endif %}
                         </ul>
                         <div class="form-inline my-2 my-lg-0">
                             {% if user.is_authenticated %}
+                                {% if not user.is_superuser %}
+                                <ul class="navbar-nav mr-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link">Saldo: {{ user.saldo_player }}</a>
+                                    </li>
+                                </ul>
+                                {% endif %}
                                 <a href="{% url 'logout' %}" class="btn btn-outline-light my-2 my-sm-0" role="button" aria-pressed="true">Sair</a>
                             {% else %}
                                 <a href="{% url 'login' %}" class="btn btn-outline-light my-2 my-sm-0" role="button" aria-pressed="true">Entrar</a>

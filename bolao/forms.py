@@ -8,9 +8,10 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class UserCreationForm(forms.ModelForm):
+
     class Meta:
         model = Usuario
-        fields = ('nome_player','login_player','password', 'groups')
+        fields = ('nome_player','login_player','password', 'is_superuser')
 
     def save(self, commit=True):
         # Save the provided password in hashed format
@@ -19,6 +20,7 @@ class UserCreationForm(forms.ModelForm):
         user.is_staff = True
         user.is_active = True
         user.saldo_player = 10
+        user.is_superuser = self.cleaned_data["is_superuser"]
 
         if commit:
             user.save()

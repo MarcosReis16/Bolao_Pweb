@@ -5,7 +5,30 @@
 {% block content %}
 <br/>
 {% if user.is_authenticated %}
-  <h4>Olá {{ user.nome_player }}!</h4>
+  <h2>Olá {{ user.nome_player }}!</h2>
+  <br/>
+  <h4>Ranking</h4>
+  <br/>
+  <table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+      <tr>
+        <th style="width: 10%; text-align: center;">Posição</th>
+        <th style="width: 30%; text-align: center;">Login</th>
+        <th style="width: 40%; text-align: center;">Nome Completo</th>
+        <th style="width: 20%; text-align: center;">Valor Ganho</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for usuario in user.obter_ranking %}
+        <tr>
+          <td style="text-align: center;">{{usuario.position}}</td>
+          <td style="text-align: center;">{{ usuario.login_player }}</td>
+          <td style="text-align: center;">{{ usuario.nome_player }}</td>
+          <td style="text-align: center;">{{ usuario.total_ganho }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% else %}
   <h4>Você não está logado</h4>
 {% endif %}

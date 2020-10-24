@@ -8,21 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Usuario, Partida, Aposta
 from django.utils.translation import ugettext_lazy as _
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import Group
 
-
-# Create your views here.
-def realizar_aposta(request):
-    if request.method == 'POST':
-        form = ApostarForm(request.POST)
-        if not form.is_valid():
-
-            form = ApostarForm()
-
-    else:
-        form = ApostarForm()
-    context = {'form' : form}
-    return render(request,'aposta.html', context)
 
 def index(request):
     return render(request,'login.html', {})
@@ -38,6 +24,7 @@ def signup(request):
             login_player = form.cleaned_data.get('login_player')
             raw_password = form.cleaned_data.get('password')
             user = authenticate(username=login_player, password=raw_password)
+                                
             #todo
             return redirect('home')
     else:
@@ -60,10 +47,9 @@ def list_Users(request):
         users = paginator.page(paginator.num_pages)
 
     return render(request, 'listaUsuarios.html', { 'users': users })
+    
 
 def list_Partidas(request):
-    if not request.user.is_superuser:
-        raise ValidationError(_('Usuário não autorizado'), code='invalid')
 
     partidas = Partida.objects.all()
     page = request.GET.get('page', 1)
@@ -90,18 +76,15 @@ def encerra_Partida(request, pk, p1, p2):
     return HttpResponse(status=204)
 
 def realizar_Aposta(request, pk, p1, p2):
-    if not request.user.is_superuser:
-        raise ValidationError(_('Usuário não autorizado'), code='invalid')
+    if request.user.is_superuser:
+        raise ValidationError(_('Superusuário não realiza apostas'), code='invalid')
     
     partida = get_object_or_404(Partida, id_partida=pk)
 
     usuario = get_object_or_404(Usuario, id_player=request.user.pk)
 
     aposta = Aposta();
-    aposta.usuario = usuario
-    aposta.partida = partida
-    aposta.placar_time1 = p1
-    aposta.placar_time2 = p2
+    aposta.apostar(p1,p2,partida,usuario)
 
     return HttpResponse(status=204)
 
@@ -118,7 +101,7 @@ def cadastrarPartida(request):
         form = CriarPartidaForm()
     return render(request, 'criarPartida.html', {'form': form})
 
-def adicionarSaldo(request, pk, valor):
+def adicionar_saldo(request, pk, valor):
     if not request.user.is_superuser:
         raise ValidationError(_('Usuário não autorizado'), code='invalid')
 
